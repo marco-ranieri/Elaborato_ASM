@@ -90,7 +90,7 @@ pilot_ok:
    
     xorl %eax, %eax
     movl pilot_id, %eax
-    addl $48, %eax
+    # addl $48, %eax
     movl %eax, (%edi)
 
     popl %edx                                   # poppo tutti i registri in sequenza INVERSA dallo stack

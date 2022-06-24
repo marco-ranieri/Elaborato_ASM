@@ -1,5 +1,6 @@
 .section .data
 
+id: .long 0
 
 .section .text
 .global telemetry
@@ -11,6 +12,10 @@ movl 8(%esp), %edi                              # punto allo spazio di memoria (
 
 
 call get_pilot_id
+
+xorl %eax, %eax
+movl (%edi), %eax                               # salvo il pilot_id in eax
+movl %eax, id                                   # lo salvo come intero nella variabile "id"
 
 ret
 
