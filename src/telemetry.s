@@ -1,6 +1,7 @@
 .section .data
 
 id: .long 0
+invalid_pilot_str: .ascii "Invalid\n\0"
 
 .section .text
 .global telemetry
@@ -18,6 +19,9 @@ xorl %eax, %eax
 movl (%edi), %eax                               # salvo il pilot_id in eax
 movl %eax, id                                   # lo salvo come intero nella variabile "id"
 
+cmpl $20, id                                    # se l'id è > 20, salto alla stampa della stringa "Invalid\n\0"
+jge invalid_id
+
 # ESI continua a puntare alla stringa di input (0x5655a1a0)
 # EDI continua a puntare alla stringa di output (0x5655a350)
 
@@ -29,21 +33,20 @@ call parse_pilot_data
 ret
 
 
+invalid_id:                                     # stampa stringa invalid
+    xorl %ecx, %ecx
+    leal invalid_pilot_str, %edx
 
-# ciclo:
-# 
-#     movb (%esi, %ecx), %al                      # prendo il primo carattere della stringa di input e lo metto in al
-#     movb %al, (%edi, %ecx)                      # lo metto da %al al primo posto nella stringa di output
-#     incl %ecx                                   # incremento ecx per passare all aprossima lettera al ciclo successivo
-#     cmpb $0, %al                                # confronto il carattere che ho in %al con il valore 0 (fine stringa)
-#     je fine
-# jmp ciclo                                       # se non è 0, ricomincio il ciclo (passando alla lettera successiva)
-# 
-# 
-# fine:                                            
-# popl %edx                                       # poppo tutti i registri in sequenza INVERSA dallo stack
-# popl %ecx
-# popl %ebx
-# popl %eax
-# 
-# ret
+    parse_invalid_string:
+        movb (%edx, %ecx), %al
+        movb %al, (%edi, %ecx)
+        cmpb $0, %al
+        je end
+        incl %ecx
+        jmp parse_invalid_string
+
+
+
+
+end:
+ret

@@ -13,7 +13,8 @@ str2num:
 
 pushl %eax                                      # pusho tutti i registri in sequenza sullo stack
 pushl %ebx
-# pushl %ecx
+pushl %ecx                                      # pusho anche ecx così quando ritorno dopo il check dell'id pilota poso continuare a stampare la stringa da dove 
+                                                # ero fermo prima di entrare nella str2num (=> e quidni posso stampare anche l'id pilota)
 pushl %edx
 
 # --------------------------------------------------
@@ -49,7 +50,7 @@ movl %eax, (%edi)
 # --------------------------------------------------
 
 popl %edx                                   # poppo tutti i registri in sequenza INVERSA dallo stack
-# popl %ecx
+popl %ecx
 popl %ebx
 popl %eax
 

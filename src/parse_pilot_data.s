@@ -23,8 +23,8 @@ pushl %edx
 xorl %ecx, %ecx
 xorl %eax, %eax
 
-movl (%edi), %eax
-movl %eax, verified_id                      # verified_id contiene l'id del pilota di input (formato INT)
+movl (%edi), %eax                               # carico in eax l'id del pilota in input, ritornata dalla call a get_pilot_id
+movl %eax, verified_id                          # verified_id contiene l'id del pilota di input (formato INT)
 
 skip_first_line:
     movb (%esi, %ecx), %al
@@ -35,48 +35,46 @@ skip_first_line:
 
 telemetry_rows:
 
-match_pilot_id:
+    parse_row:
 
-    time_field:                                     # qui EAX contiene il valore 10 -> carattere a line feed \n
-        movb (%esi, %ecx), %al
-        cmpb $44, %al
-        je pilot_id_field
-        incl %ecx
-        jmp time_field
-
-    pilot_id_field:
-        call str2num                                
-        movl (%edi), %eax                           # edi contiene l'indirizzo di memoria della variabile temp_num
-        movl %eax, current_id
-
-        compare_ids:
-            xorl %ebx, %ebx
-            movb verified_id, %al
-            movb current_id, %bl
-            cmp %al, %bl
-            jne next_row 
-
-            jmp row_validated
-
-        # movb (%esi, %ecx), %al
-        # cmpb $44, %al
-        # je compare_ids
-        
-        # cmp 
-        # incl %ecx
-        # jmp pilot_id_field
-
-        next_row:
+        time_field:                                     # qui EAX contiene il valore 10 -> carattere a line feed \n
             movb (%esi, %ecx), %al
-            cmpb $10, %al
-            je match_pilot_id
+
+            # TODO: stampa caratteri del tempo
+
+            cmpb $44, %al
+            je pilot_id_field
             incl %ecx
-            jmp next_row
+            jmp time_field
+
+        pilot_id_field:
+            call str2num                                
+            movl (%edi), %eax                           # edi contiene l'indirizzo di memoria della variabile temp_num
+            movl %eax, current_id
+
+            compare_ids:
+                xorl %ebx, %ebx
+                movb verified_id, %al
+                movb current_id, %bl
+                cmp %al, %bl
+                jne next_row 
+
+                jmp row_validated
+
+            next_row:
+                movb (%esi, %ecx), %al                  # verifico di arrivare a fine riga (linefeed) e riparto senza stampare nulla
+                cmpb $10, %al
+                je parse_row
+                incl %ecx
+                jmp next_row
 
 
-row_validated:
+    row_validated:
+        # TODO: parso tutti i caratteri finché non incontro COMMA, e li stampo (=> id pilota)
 
-    movl $42, %eax
+
+
+        movl $42, %eax # --------- CHECK
 
 # --------------------------------------------------
 

@@ -21,8 +21,6 @@ pilot_17_str:   .string     "Kimi Raikkonen\0"      # 15
 pilot_18_str:   .string     "Esteban Ocon\0"        # 13
 pilot_19_str:   .string     "Valtteri Bottas\0"     # 16
 
-invalid_pilot_str: .string "Invalid\0"
-
 pilot_id: .long 0
 
 .section .text
@@ -44,8 +42,8 @@ check_pilot:
     xorl %ecx, %ecx                             # azzero ECX per usarlo come contatore incrementale per la stringa piloti GENERALE
 
     continue:
-        movb (%edi, %ecx), %al                  # in AL metto la prima lettera della stringa piloti
-        movb (%esi, %ecx), %bl                  # in BL metto la prima lettera della stringa del pilota in input  
+        movb (%edi, %ecx), %al                  # in AL metto la lettera della stringa piloti
+        movb (%esi, %ecx), %bl                  # in BL metto la lettera della stringa del pilota in input  
         incl %ecx                               # incremento ECX e EDX per passare alla prossima lettera al ciclo successivo
 
         test %al, %al                           # verifico che il carattere a cui sono sia fine stringa (0)
@@ -57,8 +55,8 @@ check_pilot:
     jmp continue                                # altrimenti continuo con il ciclo (finisco la stringa corrente)
 
 end_string:
-    cmpb $10, %bl                               # verifico che la stringa del pilot adel file di input sia finita
-    je pilot_ok                                 # se sì, salto a fine funzione per restituire il pilot_id
+    cmpb $10, %bl                               # verifico che la stringa del pilota del file di input sia finita (linefeed)
+    je pilot_end                                 # se sì, salto a fine funzione per restituire il pilot_id
     # jmp invalid
 
 dash_string:
@@ -80,11 +78,13 @@ increment_pilot:
     incl %edx                                   #
     movl %edx, pilot_id                         #
 
+    cmpl $20, %edx                              # se sono arrivato a contare fino a 20, salto alla fine (invalid pilot name)
+    jge pilot_end
     
     jmp check_pilot                             # continuo il check con il prossimo pilota
 
 
-pilot_ok:
+pilot_end:
     
     movl 28(%esp), %edi                         # punto allo spazio di memoria dello STACK che contiene l'indirizzo in cui verrà dato in output il 2° parametro della funzione (stringa output) in EDI
    
