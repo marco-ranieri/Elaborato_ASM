@@ -10,12 +10,21 @@ telemetry:
 movl 4(%esp), %esi                              # punto allo spazio di memoria (32bit) subito sotto nello stack e salvo l'indirizzo del primo parametro della funzione (stringa input) in ESI
 movl 8(%esp), %edi                              # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in ESI
 
-
 call get_pilot_id
+# TODO: stmpa stringa invalid se nome pilota non valido
+# (=> se passo tutti gli id pilota senza trovarlo, pilot_id sarà > 19 => metto qui la funzione per stampare la stringa invalid, non in "get_pilot_id")
 
 xorl %eax, %eax
 movl (%edi), %eax                               # salvo il pilot_id in eax
 movl %eax, id                                   # lo salvo come intero nella variabile "id"
+
+# ESI continua a puntare alla stringa di input (0x5655a1a0)
+# EDI continua a puntare alla stringa di output (0x5655a350)
+
+leal id, %edi
+
+call parse_pilot_data
+
 
 ret
 

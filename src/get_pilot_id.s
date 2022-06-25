@@ -58,8 +58,8 @@ check_pilot:
 
 end_string:
     cmpb $10, %bl                               # verifico che la stringa del pilot adel file di input sia finita
-    je pilot_ok                                 # se sì, salto a fine funzione per erstituire il pilot_id
-    jmp invalid
+    je pilot_ok                                 # se sì, salto a fine funzione per restituire il pilot_id
+    # jmp invalid
 
 dash_string:
     movb (%edi, %ecx), %al                      #
@@ -86,7 +86,7 @@ increment_pilot:
 
 pilot_ok:
     
-    movl 28(%esp), %edi                         # punto allo spazio di memoria dello STACK che contienen l'indirizzo in cui verrà dato in output il 2° parametro della funzione (stringa output) in EDI
+    movl 28(%esp), %edi                         # punto allo spazio di memoria dello STACK che contiene l'indirizzo in cui verrà dato in output il 2° parametro della funzione (stringa output) in EDI
    
     xorl %eax, %eax
     movl pilot_id, %eax
@@ -98,8 +98,5 @@ pilot_ok:
     popl %ebx
     popl %eax
 
-    ret
+ret
 
-
-invalid:
-    ret
