@@ -56,8 +56,9 @@ skip_first_line:
 
 telemetry_rows:
     incl %ecx                                           # skippo primo carattere di linefeed \0
+    
     start_parse_row:
-        # incl %ecx
+
             cmpb $0, %al
             je end                                      # se sono arrivato a fine stringa, salto alla fine
 
@@ -70,7 +71,7 @@ telemetry_rows:
             je pilot_id_field
             incl %ecx
             incl %edx
-            incl count # ?????
+            incl count                                  # uso count per tenere il conto dei caratteri parsati, e poter riavvolgere il puntatore in seguito
             jmp time_field
 
         pilot_id_field:
@@ -99,6 +100,7 @@ telemetry_rows:
             rewind_edx:
                 subl count, %edx
                 movl $0, count
+                incl %ecx                               # incremento ecx per skippare il linefeed
                 jmp start_parse_row
 
     row_validated:
