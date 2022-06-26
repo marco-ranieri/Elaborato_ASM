@@ -5,10 +5,6 @@ current_id: .long 0
 invalid_pilot_str: .ascii "Invalid\n\0"
 count: .long 0
 
-low_str: .ascii "LOW"
-medium_str: .ascii "MEDIUM"
-high_str: .ascii "HIGH"
-
 max_speed: .long 0
 max_rpm: .long 0
 max_temp: .long 0
