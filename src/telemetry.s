@@ -65,22 +65,20 @@ telemetry_rows:
     start_parse_row:
 
             movl $0, count                              # riazzero il contatore dei caratteri della riga
-            # TODO: aggiungi altre righe all'output se sono valide
+
             movb (%esi, %ecx), %al
             cmpb $0, %al
             je end                                      # se sono arrivato a fine stringa, salto alla fine
 
-        time_field:                                     # qui EAX contiene il valore 10 -> carattere a line feed \n
+
+        dash_row_for_pilot_id:
             movb (%esi, %ecx), %al
-
-            movb %al, (%edi, %edx)                      # scrivo i caratteri nella stringa di output, usando come puntatore EDX
-
             cmpb $44, %al
             je pilot_id_field
             incl %ecx
             incl %edx
             incl count                                  # uso count per tenere il conto dei caratteri parsati, e poter riavvolgere il puntatore in seguito
-            jmp time_field
+            jmp dash_row_for_pilot_id
 
         pilot_id_field:
             call str2num
@@ -114,12 +112,32 @@ telemetry_rows:
     row_validated:
         
         parse_validated_row:
+            subl count, %ecx                            # faccio rewind di ecx ed edx, cos' riparso la riga
+            subl count, %edx
+
+
+            time_field:                                 # qui EAX contiene il valore 10 -> carattere a line feed \n
+            movb (%esi, %ecx), %al
+            movb %al, (%edi, %edx)                      # scrivo i caratteri nella stringa di output, usando come puntatore EDX
+            cmpb $44, %al
+            je skip_pilot_id
             incl %ecx
-            movb (%esi, %ecx), %al                  # verifico di arrivare a fine riga (linefeed) e riparto senza stampare nulla
-            cmpb $10, %al
-            je start_parse_row                      # se raggiungo il linefeed -> vai a prossima riga
-            cmpb $44, %al                           
-            jne parse_validated_row                 # vado avanti finché non raggiungo il campo successivo - skippando il campo ID
+            incl %edx
+            jmp time_field
+            
+            skip_pilot_id:                              # skippo il campo id pilota
+            incl %ecx
+            movb (%esi, %ecx), %al                      
+            cmpb $44, %al
+            jne skip_pilot_id
+
+            # altrimenti continua fino a fine riga
+            # incl %ecx
+            # movb (%esi, %ecx), %al                  # verifico di arrivare a fine riga (linefeed) e riparto senza stampare nulla
+            # cmpb $10, %al
+            # je start_parse_row                      # se raggiungo il linefeed -> vai a prossima riga
+            # cmpb $44, %al                           
+            # jne parse_validated_row                 # vado avanti finché non raggiungo il campo successivo - skippando il campo ID
             
             # ALTRIMENTI: 
 
