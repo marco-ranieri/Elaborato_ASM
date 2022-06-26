@@ -23,24 +23,20 @@ telemetry:
 movl 4(%esp), %esi                              # punto allo spazio di memoria (32bit) subito sotto nello stack e salvo l'indirizzo del primo parametro della funzione (stringa input) in ESI
 movl 8(%esp), %edi                              # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in ESI
 
+xorl %eax, %eax                                 # EAX contiene l'indirizzo della stringa di input, lo devo azzerare per poterlo usare in get_pilot_id
 call get_pilot_id
 
-xorl %eax, %eax
-movl (%edi), %eax                               # salvo il pilot_id in eax
+# xorl %eax, %eax
+# movl (%edi), %eax                               # salvo il pilot_id in eax
 movl %eax, id                                   # lo salvo come intero nella variabile "id"
 
 cmpl $20, id                                    # se l'id è > 20, salto alla stampa della stringa "Invalid\n\0"
 jge invalid_id
 
+movl 4(%esp), %esi                              # punto allo spazio di memoria (32bit) subito sotto nello stack e salvo l'indirizzo del primo parametro della funzione (stringa input) in ESI
+movl 8(%esp), %edi                              # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in ESI
 # ESI continua a puntare alla stringa di input (0x5655a1a0)
 # EDI continua a puntare alla stringa di output (0x5655a350)
-
-# leal id, %edi
-# call parse_pilot_data
-
-
-
-
 
 # --------------------------------------------------
 
@@ -50,8 +46,6 @@ xorl %ebx, %ebx
 xorl %ecx, %ecx
 xorl %edx, %edx
 
-# movl id, %eax                               # carico in eax l'id del pilota in input, ritornata dalla call a get_pilot_id
-# movl %eax, verified_id                          # verified_id contiene l'id del pilota di input (formato INT)
 
 skip_first_line:
     movb (%esi, %ecx), %al                              # carico il primo carattere della stringa input
@@ -81,7 +75,6 @@ telemetry_rows:
 
         pilot_id_field:
             call str2num
-            # movl (%edi), %eax                           # qui EDI contiene l'indirizzo di memoria della variabile temp_num di str2num.s
 
             movl %eax, current_id                         # EAX contiene il valore ritornato da str2num
 
@@ -109,9 +102,7 @@ telemetry_rows:
                 jmp start_parse_row
 
     row_validated:
-        # TODO: parso tutti i caratteri finché non incontro COMMA, e li stampo (=> id pilota)
-
-        movl 8(%esp), %edi                          # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in EDI
+        
         parse_validated_row:
             incl %ecx
             movb (%esi, %ecx), %al                  # verifico di arrivare a fine riga (linefeed) e riparto senza stampare nulla
