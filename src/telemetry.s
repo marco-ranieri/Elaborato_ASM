@@ -20,8 +20,13 @@ current_temp: .long 0
 
 telemetry:
 
-movl 4(%esp), %esi                              # punto allo spazio di memoria (32bit) subito sotto nello stack e salvo l'indirizzo del primo parametro della funzione (stringa input) in ESI
-movl 8(%esp), %edi                              # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in ESI
+pushl %eax
+pushl %ebx
+pushl %ecx
+pushl %edx
+
+movl 20(%esp), %esi                              # punto allo spazio di memoria (32bit) subito sotto nello stack e salvo l'indirizzo del primo parametro della funzione (stringa input) in ESI
+movl 24(%esp), %edi                              # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in ESI
 
 xorl %eax, %eax                                 # EAX contiene l'indirizzo della stringa di input, lo devo azzerare per poterlo usare in get_pilot_id
 call get_pilot_id
@@ -33,8 +38,8 @@ movl %eax, id                                   # lo salvo come intero nella var
 cmpl $20, id                                    # se l'id è > 20, salto alla stampa della stringa "Invalid\n\0"
 jge invalid_id
 
-movl 4(%esp), %esi                              # punto allo spazio di memoria (32bit) subito sotto nello stack e salvo l'indirizzo del primo parametro della funzione (stringa input) in ESI
-movl 8(%esp), %edi                              # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in ESI
+movl 20(%esp), %esi                              # punto allo spazio di memoria (32bit) subito sotto nello stack e salvo l'indirizzo del primo parametro della funzione (stringa input) in ESI
+movl 24(%esp), %edi                              # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in ESI
 # ESI continua a puntare alla stringa di input (0x5655a1a0)
 # EDI continua a puntare alla stringa di output (0x5655a350)
 
@@ -372,5 +377,10 @@ telemetry_rows:
 
 
 end:
+
+popl %edx
+popl %ecx
+popl %ebx
+popl %eax
 
 ret
