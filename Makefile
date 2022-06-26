@@ -6,8 +6,8 @@ FLAGS = -m32 -g -c
 
 all: bin/telemetry
 
-bin/telemetry: obj/telemetry.o obj/main.o obj/get_pilot_id.o obj/str2num.o obj/num2str.o
-	$(GCC) -m32 obj/telemetry.o obj/main.o obj/get_pilot_id.o obj/str2num.o obj/num2str.o -o bin/telemetry
+bin/telemetry: obj/telemetry.o obj/main.o obj/get_pilot_id.o obj/str2num.o
+	$(GCC) -m32 obj/telemetry.o obj/main.o obj/get_pilot_id.o obj/str2num.o -o bin/telemetry
 
 
 obj/telemetry.o: src/telemetry.s
@@ -24,9 +24,6 @@ obj/get_pilot_id.o: src/get_pilot_id.s
 
 obj/str2num.o: src/lib/str2num.s
 	$(GCC) $(FLAGS) src/lib/str2num.s -o obj/str2num.o
-
-obj/num2str.o: src/lib/num2str.s
-	$(GCC) $(FLAGS) src/lib/num2str.s -o obj/num2str.o
 
 .PHONY: clean
 
