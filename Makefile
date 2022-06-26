@@ -16,11 +16,8 @@ obj/telemetry.o: src/telemetry.s
 obj/main.o: src/main.c
 	$(GCC) $(FLAGS) src/main.c -o obj/main.o
 
-obj/get_pilot_id.o: src/get_pilot_id.s
-	$(GCC) $(FLAGS) src/get_pilot_id.s -o obj/get_pilot_id.o
-
-#obj/parse_pilot_data.o: src/parse_pilot_data.s
-#	$(GCC) $(FLAGS) src/parse_pilot_data.s -o obj/parse_pilot_data.o
+obj/get_pilot_id.o: src/lib/get_pilot_id.s
+	$(GCC) $(FLAGS) src/lib/get_pilot_id.s -o obj/get_pilot_id.o
 
 obj/str2num.o: src/lib/str2num.s
 	$(GCC) $(FLAGS) src/lib/str2num.s -o obj/str2num.o
