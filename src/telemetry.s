@@ -9,6 +9,9 @@ max_speed: .long 0
 max_rpm: .long 0
 max_temp: .long 0
 
+count_frames: .long 0
+sum_speeds: .long 0
+
 current_speed: .long 0
 current_rpm: .long 0
 current_temp: .long 0
@@ -28,9 +31,12 @@ pushl %edx
 movl 20(%esp), %esi                              # punto allo spazio di memoria (32bit) subito sotto nello stack e salvo l'indirizzo del primo parametro della funzione (stringa input) in ESI
 movl 24(%esp), %edi                              # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in ESI
 
+pushl %edi
+
 xorl %eax, %eax                                 # EAX contiene l'indirizzo della stringa di input, lo devo azzerare per poterlo usare in get_pilot_id
 call get_pilot_id
 
+popl %edi
 # xorl %eax, %eax
 # movl (%edi), %eax                               # salvo il pilot_id in eax
 movl %eax, id                                   # lo salvo come intero nella variabile "id"
@@ -68,7 +74,7 @@ telemetry_rows:
 
             movb (%esi, %ecx), %al
             cmpb $0, %al
-            je end                                      # se sono arrivato a fine stringa, salto alla fine
+            je finish_row                                  # se sono arrivato a fine stringa, salto alla stampa dell'ultima riga
 
 
         dash_row_for_pilot_id:
@@ -145,6 +151,9 @@ telemetry_rows:
             speed:
                 call str2num                                # la str2num usa EAX come input, e come output
                 
+                addl %eax, sum_speeds
+                incl count_frames
+
                 movl %eax, current_speed
                 movl max_speed, %ebx
                 cmpl %ebx, %eax
@@ -397,6 +406,22 @@ telemetry_rows:
             jmp parse_invalid_string
 
 
+
+finish_row:                                         # stampo l'ultima riga
+
+    pushl %eax
+    pushl %ebx
+    pushl %ecx
+    pushl %edx
+
+    movl max_rpm, %eax
+    call num2str
+
+    popl %edx
+    popl %ecx
+    popl %ebx
+    popl %eax
+    
 
 end:
 

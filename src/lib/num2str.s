@@ -47,16 +47,16 @@ num2str:
         loop ribalta
 
 
-    stampa:
-
-        movb $10, (%ebx,%edx,1)    # aggiunge il carattere '\n' in fondo a 'numstr'
-
-        inc %ebx
-        movl %ebx, %edx            # carica in EDX la lunghezza della stringa 'numstr'
-        movl $4, %eax              # carica in EAX il codice della syscall WRITE
-        movl $1, %ebx              # carica in EBX il codice dello standard output
-        leal numstr, %ecx          # carica in ECX l'indirizzo della stringa 'numstr'
-        int $0x80                  # esegue la syscall
+    # stampa:
+    # 
+    #     movb $10, (%ebx,%edx,1)    # aggiunge il carattere '\n' in fondo a 'numstr'
+    # 
+    #     inc %ebx
+    #     movl %ebx, %edx            # carica in EDX la lunghezza della stringa 'numstr'
+    #     movl $4, %eax              # carica in EAX il codice della syscall WRITE
+    #     movl $1, %ebx              # carica in EBX il codice dello standard output
+    #     leal numstr, %ecx          # carica in ECX l'indirizzo della stringa 'numstr'
+    #     int $0x80                  # esegue la syscall
 
 	ret
 
