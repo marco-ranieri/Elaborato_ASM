@@ -11,10 +11,10 @@ temp_num: .long 0
 # CONVERTO STRINGA A NUMERO
 str2num:
 
-pushl %eax                                      # pusho tutti i registri in sequenza sullo stack
+# pushl %eax                                      # pusho tutti i registri in sequenza sullo stack
 pushl %ebx
 pushl %ecx                                      # pusho anche ecx così quando ritorno dopo il check dell'id pilota poso continuare a stampare la stringa da dove 
-                                                # ero fermo prima di entrare nella str2num (=> e quidni posso stampare anche l'id pilota)
+                                                # ero fermo prima di entrare nella str2num (=> e quindi posso stampare anche l'id pilota)
 pushl %edx
 
 # --------------------------------------------------
@@ -32,6 +32,9 @@ loop1:
 
     je fine_str2num                 # se sì, salta a fine loop
 
+    cmpb $10, %bl
+    je fine_str2num
+
     subl $48, %ebx                   # converte cifra da string a numero in ebx
 
     movl $10, %edx                  # mette il valore 10 in %edx
@@ -44,15 +47,15 @@ loop1:
 
 fine_str2num:
 
-leal temp_num, %edi
-movl %eax, (%edi)
+# leal temp_num, %edi
+# movl %eax, (%edi)
 
 # --------------------------------------------------
 
 popl %edx                                   # poppo tutti i registri in sequenza INVERSA dallo stack
 popl %ecx
 popl %ebx
-popl %eax
+# popl %eax
 
 
 ret
