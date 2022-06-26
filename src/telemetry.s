@@ -65,18 +65,15 @@ skip_first_line:
     jmp skip_first_line
 
 telemetry_rows:
-
+    incl %ecx                                           # skippo primo carattere di linefeed \0
     start_parse_row:
         # incl %ecx
+            cmpb $0, %al
+            je end                                      # se sono arrivato a fine stringa, salto alla fine
+
         time_field:                                     # qui EAX contiene il valore 10 -> carattere a line feed \n
             movb (%esi, %ecx), %al
 
-            cmpb $0, %al
-            je end
-
-
-            # TODO: stampa caratteri del tempo
-            movl 8(%esp), %edi                          # punto allo spazio di memoria (32bit) ancora sotto nello stack e salvo l'indirizzo del secondo parametro della funzione (stringa output) in EDI
             movb %al, (%edi, %edx)                      # scrivo i caratteri nella stringa di output, usando come puntatore EDX
 
             cmpb $44, %al
@@ -351,7 +348,7 @@ telemetry_rows:
         end_row:
             incl %edx
             movl $10, (%edi, %edx)                  # fine riga
-            # stampa a capo + vaia  riga successiva
+            # stampa a capo + vai a  riga successiva
             jmp start_parse_row
 
         
