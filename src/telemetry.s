@@ -64,6 +64,9 @@ telemetry_rows:
     
     start_parse_row:
 
+            movl $0, count                              # riazzero il contatore dei caratteri della riga
+            # TODO: aggiungi altre righe all'output se sono valide
+            movb (%esi, %ecx), %al
             cmpb $0, %al
             je end                                      # se sono arrivato a fine stringa, salto alla fine
 
@@ -104,7 +107,7 @@ telemetry_rows:
 
             rewind_edx:
                 subl count, %edx
-                movl $0, count
+                # movl $0, count
                 incl %ecx                               # incremento ecx per skippare il linefeed
                 jmp start_parse_row
 
@@ -341,22 +344,23 @@ telemetry_rows:
             
         end_row:
             incl %edx
-            movl $10, (%edi, %edx)                  # fine riga
-            # stampa a capo + vai a  riga successiva
+            movl $10, (%edi, %edx)                      # aggiungo fine riga
+            incl %ecx
+            incl %edx                                   # incremento edx per spostarmi al prossimo character e iniziare una nuova riga dell'output
             jmp start_parse_row
 
         
 
         # --------------------------------------------------------------------------
-            movl $42, %eax # --------- CHECK
-            jmp end
-
-
-            movb %al, (%edi, %edx)                      # scrivo i caratteri nella stringa di output, usando come puntatore EDX
-            incl %ecx
-            incl %edx
-
-            jmp parse_validated_row
+            # movl $42, %eax # --------- CHECK
+            # jmp end
+            # .            
+            # .
+            # movb %al, (%edi, %edx)                      # scrivo i caratteri nella stringa di output, usando come puntatore EDX
+            # incl %ecx
+            # incl %edx
+            # .
+            # jmp parse_validated_row
 
 
 # --------------------------------------------------
